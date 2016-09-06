@@ -15,7 +15,7 @@
 		#imgTheatre{ background-color: #FFFFFF; position: relative; }
 		#imagesList{ height: 100%; width: 410px; position:absolute; left: 0; top: 0; background-color: #FFFFFF; padding: 10px; overflow-y: auto; }
 		#mainImgWrapper{ height: 100%; width: 100%; padding-left: 410px; background-color: #000000; }
-		#mainImage{ position: relative; height: 100%; width: 100%; background-image: url('imgs/img1.jpg'); background-size: contain; background-position: center center; background-repeat: no-repeat; }
+		#mainImage{ position: relative; height: 100%; width: 100%; background-size: contain; background-position: center center; background-repeat: no-repeat; }
 		.imageListItem{ width: 130px; }
 		.listImg{ border:0; margin:0; padding: 0; width: 130px; float: left; opacity: 0.5; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; }
 		.listImg:hover{ opacity: 1; }
@@ -26,8 +26,8 @@
 		#mainImage:hover #prevButton, #mainImage:hover #nextButton{ opacity: 1; }
 		@media screen and (max-width: 980px) {
 			#imgTheatreWrapper{ padding: 10px 20px; }
-		    #masonryWrapper{ height: 100px; white-space: nowrap; }
-		    .listImg{ height: 100px; width: auto; display: inline; float: none; }
+		    #masonryWrapper{ height: 100px; white-space: nowrap; position: relative; }
+		    .listImg{ height: 100px; width: auto; float: none; }
 		    #imagesList{ overflow-x: auto; overflow-y: hidden; width: 100%; top: initial; bottom: 0; height: 120px; }
 		    #mainImgWrapper{ padding: 0; padding-bottom: 120px; }
 		    #prevButton, #nextButton{ opacity: 1; }
@@ -54,15 +54,69 @@
 	var $grid = null, masonryActive = false;
 	var masonryOptions = {
 		itemSelector: '.listImg',
-		columnWidth: 130
+		columnWidth: 130,
+		transitionDuration: 0
 	};
+	var imagesList = _.map(_.range(1,175), function(item){
+		return 'imgs/img'+item+'.jpg';
+	});
+
+	jQuery.fn.scrollToElem = function(elem, speed) { 
+	    $(this).animate({
+	        scrollTop: $(this).scrollTop() - $(this).offset().top + $(elem).offset().top 
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+	jQuery.fn.scrollToPos = function(elemPos, speed) { 
+	    $(this).animate({
+	        scrollTop: elemPos
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+	jQuery.fn.scrollToElemLeft = function(elem, speed) { 
+	    $(this).animate({
+	        scrollLeft: $(this).scrollLeft() - $(this).offset().left + $(elem).offset().left 
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+	jQuery.fn.scrollToPosLeft = function(elemPos, speed) { 
+	    $(this).animate({
+	        scrollLeft: elemPos
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+
+	function checkScrollVertical(elem){
+		var scrollSeparation = $(elem).position().top - $("#imagesList").scrollTop();
+		if(scrollSeparation < 0){
+			$("#imagesList").stop( true, true ).scrollToElem(elem, 300);
+		} else if(scrollSeparation > ($("#imagesList").height()-$(elem).height())){
+			$("#imagesList").stop( true, true ).scrollToPos( $(elem).position().top+$(elem).height()-$("#imagesList").height(), 300);
+		}
+	}
+
+	function checkScrollHorizontal(elem){
+		var scrollSeparation = $(elem).position().left - $("#imagesList").scrollLeft();
+		if(scrollSeparation < 0){
+			$("#imagesList").stop( true, true ).scrollToElemLeft(elem, 300);
+		} else if(scrollSeparation > ($("#imagesList").width()-$(elem).width())){
+			$("#imagesList").stop( true, true ).scrollToPosLeft( $(elem).position().left+$(elem).width()-$("#imagesList").width(), 300);
+		}
+	}
+
 	function attachEvents(){
 		$("#imagesList").on("click", ".listImg", function(e){
+			window.location.hash = $(this).attr("src");
 			$(".listImg").removeClass('active');
 			$("#mainImage").css('background-image', 'url("'+ ($(this).attr("src")) +'")' );
 			$(this).addClass('active');
 			($(".listImg.active").attr("src") == $(".listImg:first").attr("src"))?$("#prevButton").hide():$("#prevButton").show();
 			($(".listImg.active").attr("src") == $(".listImg:last").attr("src"))?$("#nextButton").hide():$("#nextButton").show();
+			if($(window).width() > 979){
+				checkScrollVertical(this);
+			} else{
+				checkScrollHorizontal(this);
+			}
 		});
 
 		$("#nextButton").on("click", function(e){
@@ -97,18 +151,15 @@
 			$("#masonryWrapper").masonry(masonryOptions);
 		}
 	}
-
 	$(document).ready(function(){
 		var imagelistHtml = _.template(
-			'<% _.each( _.range(1,175), function(item){ %>'+
-				'<img class="listImg" src="imgs/img<%= item %>.jpg" />'+
+			'<% _.each( imagesList, function(item){ %>'+
+				'<img class="listImg" src="<%= item %>" />'+
 			'<% }); %>'+
 			'<div class="clearfloat"></div>'
 		);
 
-		$("#masonryWrapper").html( imagelistHtml() );
-		$(".listImg:first").addClass('active');
-		$("#prevButton").hide();
+		$("#masonryWrapper").html( imagelistHtml({imagesList:imagesList}) );
 
 		if( $(window).width() > 979 ){
 			$("#masonryWrapper").imagesLoaded().progress( function() {
@@ -117,9 +168,17 @@
 			masonryActive = true;
 			$("#masonryWrapper").masonry(masonryOptions);
 		}
-
-
 		attachEvents();
+
+		var locHashSrc = window.location.hash.replace(/^#+|#+$/g, '');
+		if(_.indexOf(imagesList, locHashSrc ) > -1){
+			var imgItem = $(".listImg[src$='"+locHashSrc+"']");
+			$(imgItem).trigger('click');
+			$("#imagesList").stop( true, true ).scrollToElem(imgItem, 300);
+		} else{
+			$(".listImg:first").trigger('click');
+			$("#prevButton").hide();
+		}
 	});
 </script>
 
