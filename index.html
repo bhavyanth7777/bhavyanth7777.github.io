@@ -15,10 +15,23 @@
 		#imgTheatre{ background-color: #FFFFFF; position: relative; }
 		#imagesList{ height: 100%; width: 410px; position:absolute; left: 0; top: 0; background-color: #FFFFFF; padding: 10px; overflow-y: auto; }
 		#mainImgWrapper{ height: 100%; width: 100%; padding-left: 410px; background-color: #000000; }
-		#mainImage{ height: 100%; width: 100%; background-image: url('imgs/img1.jpg'); background-size: contain; background-position: center center; background-repeat: no-repeat; }
-		.imageListItem{ width: 33.3%; }
-		.listImg{ width: 33%; float: left; opacity: 0.65; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; }
+		#mainImage{ position: relative; height: 100%; width: 100%; background-image: url('imgs/img1.jpg'); background-size: contain; background-position: center center; background-repeat: no-repeat; }
+		.imageListItem{ width: 130px; }
+		.listImg{ border:0; margin:0; padding: 0; width: 130px; float: left; opacity: 0.5; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; }
 		.listImg:hover{ opacity: 1; }
+		.listImg.active{ opacity: 1; }
+		#prevButton, #nextButton{ position: absolute; width: 30px; top: 50%; opacity: 0; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; margin-top: -15px; }
+		#prevButton{ left: 10px; }
+		#nextButton{ right: 10px; }
+		#mainImage:hover #prevButton, #mainImage:hover #nextButton{ opacity: 1; }
+		@media screen and (max-width: 980px) {
+			#imgTheatreWrapper{ padding: 10px 20px; }
+		    #masonryWrapper{ height: 100px; white-space: nowrap; }
+		    .listImg{ height: 100px; width: auto; display: inline; float: none; }
+		    #imagesList{ overflow-x: auto; overflow-y: hidden; width: 100%; top: initial; bottom: 0; height: 120px; }
+		    #mainImgWrapper{ padding: 0; padding-bottom: 120px; }
+		    #prevButton, #nextButton{ opacity: 1; }
+		}
 	</style>
 </head>
 <body>
@@ -26,6 +39,8 @@
 		<div id="imgTheatre">
 			<div id="mainImgWrapper">
 				<div id="mainImage">
+					<img id="prevButton" src="prev.png"/>
+					<img id="nextButton" src="next.png"/>
 				</div>
 			</div>
 			<div id="imagesList">
@@ -36,12 +51,44 @@
 	</div>
 
 <script>
-
+	var $grid = null, masonryActive = false;
+	var masonryOptions = {
+		itemSelector: '.listImg',
+		columnWidth: 130
+	};
 	function attachEvents(){
 		$("#imagesList").on("click", ".listImg", function(e){
+			$(".listImg").removeClass('active');
 			$("#mainImage").css('background-image', 'url("'+ ($(this).attr("src")) +'")' );
+			$(this).addClass('active');
+			($(".listImg.active").attr("src") == $(".listImg:first").attr("src"))?$("#prevButton").hide():$("#prevButton").show();
+			($(".listImg.active").attr("src") == $(".listImg:last").attr("src"))?$("#nextButton").hide():$("#nextButton").show();
+		});
+
+		$("#nextButton").on("click", function(e){
+			$(".listImg.active").next(".listImg").trigger("click");
+		});
+		$("#prevButton").on("click", function(e){
+			$(".listImg.active").prev(".listImg").trigger("click");
+		});
+		$(window).resize(function(){
+			correctMasonry();
 		});
 	}
+
+
+	function correctMasonry(){
+		if( $(window).width() < 980){
+			if(masonryActive){
+				masonryActive = false;
+		    	$("#masonryWrapper").masonry('destroy');
+			}
+		} else{
+			masonryActive = true;
+			$("#masonryWrapper").masonry(masonryOptions);
+		}
+	}
+
 	$(document).ready(function(){
 		var imagelistHtml = _.template(
 			'<% _.each( _.range(1,175), function(item){ %>'+
@@ -51,21 +98,16 @@
 		);
 
 		$("#masonryWrapper").html( imagelistHtml() );
-		// setTimeout(function(){
-		// 	$('#masonryWrapper').masonry({
-		// 		itemSelector: '.listImg',
-		// 		columnWidth: 130
-		// 	});
-		// }, 500);
+		$(".listImg:first").addClass('active');
+		$("#prevButton").hide();
 
-		var $grid = $("#masonryWrapper").masonry({
-			itemSelector: '.listImg',
-			columnWidth: 130
-		});
-		$grid.imagesLoaded().progress( function() {
-		  $grid.masonry('layout');
-		});
-
+		if( $(window).width() > 979 ){
+			$("#masonryWrapper").imagesLoaded().progress( function() {
+				$("#masonryWrapper").masonry(masonryOptions);
+			});
+			masonryActive = true;
+			$("#masonryWrapper").masonry(masonryOptions);
+		}
 
 
 		attachEvents();
