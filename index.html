@@ -20,9 +20,9 @@
 		.listImg{ border:0; margin:0; padding: 0; width: 130px; float: left; opacity: 0.5; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; }
 		.listImg:hover{ opacity: 1; }
 		.listImg.active{ opacity: 1; }
-		#prevButton, #nextButton{ position: absolute; width: 30px; top: 50%; opacity: 0; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; margin-top: -15px; }
-		#prevButton{ left: 10px; }
-		#nextButton{ right: 10px; }
+		#prevButton, #nextButton{ position: absolute; top: 0; opacity: 0; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; margin-top: -15px; }
+		#prevButton{ height: 100%; left: 0px; width: 35%; }
+		#nextButton{ height: 100%; right: 0px; width: 35%; }
 		#mainImage:hover #prevButton, #mainImage:hover #nextButton{ opacity: 1; }
 		@media screen and (max-width: 980px) {
 			#imgTheatreWrapper{ padding: 10px 20px; }
@@ -39,8 +39,8 @@
 		<div id="imgTheatre">
 			<div id="mainImgWrapper">
 				<div id="mainImage">
-					<img id="prevButton" src="prev.png"/>
-					<img id="nextButton" src="next.png"/>
+					<div id="prevButton"></div>
+					<div id="nextButton"></div>
 				</div>
 			</div>
 			<div id="imagesList">
@@ -70,6 +70,15 @@
 		});
 		$("#prevButton").on("click", function(e){
 			$(".listImg.active").prev(".listImg").trigger("click");
+		});
+		$(document).keydown(function (e) {
+		  	var keyCode = e.keyCode || e.which,
+		    arrow = {left: 37, up: 38, right: 39, down: 40 };
+		    if(keyCode == arrow.left){
+		    	$("#prevButton").trigger("click");
+		    } else if(keyCode == arrow.right){
+		    	$("#nextButton").trigger("click");
+		    }
 		});
 		$(window).resize(function(){
 			correctMasonry();
