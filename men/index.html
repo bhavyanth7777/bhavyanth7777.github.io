@@ -1,0 +1,180 @@
+<html>
+<head>
+	<title>Dana Patrick</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#000000" />
+	<link rel="shortcut icon" href="/img/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="/css/main.css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script src="https://unpkg.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
+	<script src="https://unpkg.com/masonry-layout@4.1/dist/masonry.pkgd.min.js"></script>
+</head>
+<body>
+	<div id="innerPagesHeader">
+		<div id="innerPagesHeaderContent">
+			<p id="siteLogo"><a href="/"><span id="logoBold">Dana Patrick </span><span id="logoThin">Photography</span></a></p>
+			<ul id="mainNav">
+				<li class="mainNavItem"><a href="/men/">MEN</a></li>
+				<li class="mainNavItem"><a href="/women/">WOMEN</a></li>
+				<li class="mainNavItem"><a href="/kids/">KIDS</a></li>
+				<li class="mainNavItem"><a href="/portraits/">PORTRAITS</a></li>
+				<li class="mainNavItem"><a href="/musicians/">MUSICIANS</a></li>
+				<li class="mainNavItem"><a href="/weddings/">WEDDINGS</a></li>
+			</ul>
+			<div class="clearfloat"></div>
+		</div>
+	</div>
+
+	<div id="imgTheatreWrapper">
+		<div id="imgTheatre">
+			<div id="mainImgWrapper">
+				<div id="mainImage">
+					<div id="prevButton"></div>
+					<div id="nextButton"></div>
+				</div>
+			</div>
+			<div id="imagesList">
+				<div id="masonryWrapper">
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+	var $grid = null, masonryActive = false;
+	var masonryOptions = {
+		itemSelector: '.listImg',
+		columnWidth: 130,
+		transitionDuration: 0
+	};
+	var imagesList = _.map( _.union(_.range(101,125),_.range(201,224)), function(item){
+		return 'imgs/men'+item;
+	});
+
+	jQuery.fn.scrollToElem = function(elem, speed) { 
+	    $(this).animate({
+	        scrollTop: $(this).scrollTop() - $(this).offset().top + $(elem).offset().top 
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+	jQuery.fn.scrollToPos = function(elemPos, speed) { 
+	    $(this).animate({
+	        scrollTop: elemPos
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+	jQuery.fn.scrollToElemLeft = function(elem, speed) { 
+	    $(this).animate({
+	        scrollLeft: $(this).scrollLeft() - $(this).offset().left + $(elem).offset().left 
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+	jQuery.fn.scrollToPosLeft = function(elemPos, speed) { 
+	    $(this).animate({
+	        scrollLeft: elemPos
+	    }, speed == undefined ? 1000 : speed); 
+	    return this; 
+	};
+
+	function checkScrollVertical(elem){
+		var scrollSeparation = $(elem).position().top - $("#imagesList").scrollTop();
+		if(scrollSeparation < 0){
+			$("#imagesList").stop( true, true ).scrollToElem(elem, 300);
+		} else if(scrollSeparation > ($("#imagesList").height()-$(elem).height())){
+			$("#imagesList").stop( true, true ).scrollToPos( $(elem).position().top+$(elem).height()-$("#imagesList").height(), 300);
+		}
+	}
+
+	function checkScrollHorizontal(elem){
+		var scrollSeparation = $(elem).position().left - $("#imagesList").scrollLeft();
+		if(scrollSeparation < 0){
+			$("#imagesList").stop( true, true ).scrollToElemLeft(elem, 300);
+		} else if(scrollSeparation > ($("#imagesList").width()-$(elem).width())){
+			$("#imagesList").stop( true, true ).scrollToPosLeft( $(elem).position().left+$(elem).width()-$("#imagesList").width(), 300);
+		}
+	}
+
+	function attachEvents(){
+		$("#imagesList").on("click", ".listImg", function(e){
+			window.location.hash = $(this).attr("data-hash");
+		});
+
+		$("#nextButton").on("click", function(e){
+			$(".listImg.active").next(".listImg").trigger("click");
+		});
+		$("#prevButton").on("click", function(e){
+			$(".listImg.active").prev(".listImg").trigger("click");
+		});
+		$(document).keydown(function (e) {
+		  	var keyCode = e.keyCode || e.which,
+		    arrow = {left: 37, up: 38, right: 39, down: 40 };
+		    if(keyCode == arrow.left){
+		    	$("#prevButton").trigger("click");
+		    } else if(keyCode == arrow.right){
+		    	$("#nextButton").trigger("click");
+		    }
+		});
+		$(window).resize(function(){
+			correctMasonry();
+		});
+		window.onhashchange = function(){
+			var locHashSrc = window.location.hash.replace(/^#+|#+$/g, '');
+			var activeItem = $(".listImg[data-hash$='"+locHashSrc+"']")
+		    $(".listImg").removeClass('active');
+			$("#mainImage").css('background-image', 'url("'+ ($(activeItem).attr("data-hash")) +'_large.jpg")' );
+			$(activeItem).addClass('active');
+			($(".listImg.active").attr("src") == $(".listImg:first").attr("src"))?$("#prevButton").hide():$("#prevButton").show();
+			($(".listImg.active").attr("src") == $(".listImg:last").attr("src"))?$("#nextButton").hide():$("#nextButton").show();
+			if($(window).width() > 979){
+				checkScrollVertical(activeItem);
+			} else{
+				checkScrollHorizontal(activeItem);
+			}
+		}
+	}
+
+
+	function correctMasonry(){
+		if( $(window).width() < 980){
+			if(masonryActive){
+				masonryActive = false;
+		    	$("#masonryWrapper").masonry('destroy');
+			}
+		} else{
+			masonryActive = true;
+			$("#masonryWrapper").masonry(masonryOptions);
+		}
+	}
+	$(document).ready(function(){
+		var imagelistHtml = _.template(
+			'<% _.each( imagesList, function(item){ %>'+
+				'<img class="listImg" src="<%= item %>.jpg" data-hash="<%= item %>"/>'+
+			'<% }); %>'+
+			'<div class="clearfloat"></div>'
+		);
+
+		$("#masonryWrapper").html( imagelistHtml({imagesList:imagesList}) );
+
+		if( $(window).width() > 979 ){
+			$("#masonryWrapper").imagesLoaded().progress( function() {
+				$("#masonryWrapper").masonry(masonryOptions);
+			});
+			masonryActive = true;
+			$("#masonryWrapper").masonry(masonryOptions);
+		}
+		attachEvents();
+
+		var locHashSrc = window.location.hash.replace(/^#+|#+$/g, '');
+		if(_.indexOf(imagesList, locHashSrc ) > -1){
+			$(window).trigger('hashchange');
+		} else{
+			$(".listImg:first").trigger('click');
+			$("#prevButton").hide();
+		}
+	});
+</script>
+
+</body>
+</html>

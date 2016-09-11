@@ -2,185 +2,62 @@
 <head>
 	<title>Dana Patrick</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#000000" />
+	<link rel="shortcut icon" href="/img/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="/css/main.css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,900" rel="stylesheet">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 	<script src="https://unpkg.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
 	<script src="https://unpkg.com/masonry-layout@4.1/dist/masonry.pkgd.min.js"></script>
-
-	<style>
-		*{ box-sizing: border-box; }
-		.clearfloat{ clear: both; }
-		body{ padding: 0; margin: 0; background-color: #FFFFFF; }
-		#imgTheatreWrapper{ width: 100%; height: 100%; position: fixed; top: 0; left: 0; padding: 40px; background-color: #444444; }
-		#imgTheatre{ background-color: #FFFFFF; position: relative; }
-		#imagesList{ height: 100%; width: 410px; position:absolute; left: 0; top: 0; background-color: #FFFFFF; padding: 10px; overflow-y: auto; }
-		#mainImgWrapper{ height: 100%; width: 100%; padding-left: 410px; background-color: #000000; }
-		#mainImage{ position: relative; height: 100%; width: 100%; background-size: contain; background-position: center center; background-repeat: no-repeat; }
-		.imageListItem{ width: 130px; }
-		.listImg{ border:0; margin:0; padding: 0; width: 130px; float: left; opacity: 0.5; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; }
-		.listImg:hover{ opacity: 1; }
-		.listImg.active{ opacity: 1; }
-		#prevButton, #nextButton{ position: absolute; top: 0; opacity: 0; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; margin-top: -15px; }
-		#prevButton{ height: 100%; left: 0px; width: 35%; }
-		#nextButton{ height: 100%; right: 0px; width: 35%; }
-		#mainImage:hover #prevButton, #mainImage:hover #nextButton{ opacity: 1; }
-		@media screen and (max-width: 980px) {
-			#imgTheatreWrapper{ padding: 10px 20px; }
-		    #masonryWrapper{ height: 100px; white-space: nowrap; position: relative; }
-		    .listImg{ height: 100px; width: auto; float: none; }
-		    #imagesList{ overflow-x: auto; overflow-y: hidden; width: 100%; top: initial; bottom: 0; height: 120px; }
-		    #mainImgWrapper{ padding: 0; padding-bottom: 120px; }
-		    #prevButton, #nextButton{ opacity: 1; }
-		}
-	</style>
 </head>
 <body>
-	<div id="imgTheatreWrapper">
-		<div id="imgTheatre">
-			<div id="mainImgWrapper">
-				<div id="mainImage">
-					<div id="prevButton"></div>
-					<div id="nextButton"></div>
-				</div>
-			</div>
-			<div id="imagesList">
-				<div id="masonryWrapper">
-				</div>
-			</div>
+	<div id="mainContentWrapper">
+		<p id="siteLogo"><span id="logoBold">Dana Patrick </span><span id="logoThin">Photography</span></p>
+		<ul id="mainNav">
+			<li class="mainNavItem"><a href="/men/">MEN</a></li>
+			<li class="mainNavItem"><a href="/women/">WOMEN</a></li>
+			<li class="mainNavItem"><a href="/kids/">KIDS</a></li>
+			<li class="mainNavItem"><a href="/portraits/">PORTRAITS</a></li>
+			<li class="mainNavItem"><a href="/musicians/">MUSICIANS</a></li>
+			<li class="mainNavItem"><a href="/weddings/">WEDDINGS</a></li>
+		</ul>
+		<div class="clearfloat"></div>
+
+		<div id="mainSlider">
+			<img class="mainSliderImg" src="/img/slider_01.jpg" />
+			<img class="mainSliderImg" src="/img/slider_02.jpg" />
+			<img class="mainSliderImg" src="/img/slider_03.jpg" />
+			<img class="mainSliderImg" src="/img/slider_04.jpg" />
+			<img class="mainSliderImg" src="/img/slider_05.jpg" />
+			<img class="mainSliderImg" src="/img/slider_06.jpg" />
 		</div>
+		<div id="socialLanding">FOLLOW US ON: <span class="socialIcon"><a href="https://www.instagram.com/danapatrickphoto/"><img src="/img/social_insta.png" class="socialIconImg"/></a></span><span class="socialIcon"><a href="https://www.facebook.com/dana.patrick.photo/"><img src="/img/social_fb.png" class="socialIconImg"/></a></span></div>
+		<ul id="secondaryNav">
+			<li class="secondaryNavItem"><a href="/bookings/">BOOKINGS & RATES</a></li>
+			<li class="secondaryNavItem"><a href="/faq/">HELP & FAQ</a></li>
+		</ul>
+		<div class="clearfloat"></div>
 	</div>
-
 <script>
-	var $grid = null, masonryActive = false;
-	var masonryOptions = {
-		itemSelector: '.listImg',
-		columnWidth: 130,
-		transitionDuration: 0
-	};
-	var imagesList = _.map(_.range(1,175), function(item){
-		return 'imgs/img'+item+'.jpg';
-	});
 
-	jQuery.fn.scrollToElem = function(elem, speed) { 
-	    $(this).animate({
-	        scrollTop: $(this).scrollTop() - $(this).offset().top + $(elem).offset().top 
-	    }, speed == undefined ? 1000 : speed); 
-	    return this; 
-	};
-	jQuery.fn.scrollToPos = function(elemPos, speed) { 
-	    $(this).animate({
-	        scrollTop: elemPos
-	    }, speed == undefined ? 1000 : speed); 
-	    return this; 
-	};
-	jQuery.fn.scrollToElemLeft = function(elem, speed) { 
-	    $(this).animate({
-	        scrollLeft: $(this).scrollLeft() - $(this).offset().left + $(elem).offset().left 
-	    }, speed == undefined ? 1000 : speed); 
-	    return this; 
-	};
-	jQuery.fn.scrollToPosLeft = function(elemPos, speed) { 
-	    $(this).animate({
-	        scrollLeft: elemPos
-	    }, speed == undefined ? 1000 : speed); 
-	    return this; 
-	};
-
-	function checkScrollVertical(elem){
-		var scrollSeparation = $(elem).position().top - $("#imagesList").scrollTop();
-		if(scrollSeparation < 0){
-			$("#imagesList").stop( true, true ).scrollToElem(elem, 300);
-		} else if(scrollSeparation > ($("#imagesList").height()-$(elem).height())){
-			$("#imagesList").stop( true, true ).scrollToPos( $(elem).position().top+$(elem).height()-$("#imagesList").height(), 300);
-		}
-	}
-
-	function checkScrollHorizontal(elem){
-		var scrollSeparation = $(elem).position().left - $("#imagesList").scrollLeft();
-		if(scrollSeparation < 0){
-			$("#imagesList").stop( true, true ).scrollToElemLeft(elem, 300);
-		} else if(scrollSeparation > ($("#imagesList").width()-$(elem).width())){
-			$("#imagesList").stop( true, true ).scrollToPosLeft( $(elem).position().left+$(elem).width()-$("#imagesList").width(), 300);
-		}
-	}
-
-	function attachEvents(){
-		$("#imagesList").on("click", ".listImg", function(e){
-			window.location.hash = $(this).attr("src");
-			$(".listImg").removeClass('active');
-			$("#mainImage").css('background-image', 'url("'+ ($(this).attr("src")) +'")' );
-			$(this).addClass('active');
-			($(".listImg.active").attr("src") == $(".listImg:first").attr("src"))?$("#prevButton").hide():$("#prevButton").show();
-			($(".listImg.active").attr("src") == $(".listImg:last").attr("src"))?$("#nextButton").hide():$("#nextButton").show();
-			if($(window).width() > 979){
-				checkScrollVertical(this);
-			} else{
-				checkScrollHorizontal(this);
-			}
-		});
-
-		$("#nextButton").on("click", function(e){
-			$(".listImg.active").next(".listImg").trigger("click");
-		});
-		$("#prevButton").on("click", function(e){
-			$(".listImg.active").prev(".listImg").trigger("click");
-		});
-		$(document).keydown(function (e) {
-		  	var keyCode = e.keyCode || e.which,
-		    arrow = {left: 37, up: 38, right: 39, down: 40 };
-		    if(keyCode == arrow.left){
-		    	$("#prevButton").trigger("click");
-		    } else if(keyCode == arrow.right){
-		    	$("#nextButton").trigger("click");
-		    }
-		});
-		$(window).resize(function(){
-			correctMasonry();
-		});
-	}
-
-
-	function correctMasonry(){
-		if( $(window).width() < 980){
-			if(masonryActive){
-				masonryActive = false;
-		    	$("#masonryWrapper").masonry('destroy');
-			}
-		} else{
-			masonryActive = true;
-			$("#masonryWrapper").masonry(masonryOptions);
-		}
-	}
 	$(document).ready(function(){
-		var imagelistHtml = _.template(
-			'<% _.each( imagesList, function(item){ %>'+
-				'<img class="listImg" src="<%= item %>" />'+
-			'<% }); %>'+
-			'<div class="clearfloat"></div>'
-		);
-
-		$("#masonryWrapper").html( imagelistHtml({imagesList:imagesList}) );
-
-		if( $(window).width() > 979 ){
-			$("#masonryWrapper").imagesLoaded().progress( function() {
-				$("#masonryWrapper").masonry(masonryOptions);
-			});
-			masonryActive = true;
-			$("#masonryWrapper").masonry(masonryOptions);
-		}
-		attachEvents();
-
-		var locHashSrc = window.location.hash.replace(/^#+|#+$/g, '');
-		if(_.indexOf(imagesList, locHashSrc ) > -1){
-			var imgItem = $(".listImg[src$='"+locHashSrc+"']");
-			$(imgItem).trigger('click');
-			$("#imagesList").stop( true, true ).scrollToElem(imgItem, 300);
-		} else{
-			$(".listImg:first").trigger('click');
-			$("#prevButton").hide();
-		}
+		$("#mainSlider").height( $("#mainSlider").width()*0.5 );
+		$('#mainSlider img:gt(0)').hide();
+		setInterval(function(){
+	    $('#mainSlider :first-child').fadeOut('slow')
+	        .next('img').fadeIn()
+	        .end().appendTo('#mainSlider');}, 
+	    3000);
 	});
+
+	$(window).resize(function(){
+		$("#mainSlider").height( $("#mainSlider").width()*0.5 );		
+	});
+
+
 </script>
 
 </body>
 </html>
+

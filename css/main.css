@@ -1,0 +1,69 @@
+/*******************
+	Common Styles
+*******************/
+*{ box-sizing: border-box; }
+.clearfloat{ clear: both; }
+body{ padding: 0; margin: 0; background-color: #000000; font-family: 'Lato', sans-serif; color: #FFFFFF; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+
+/*******************
+	Landing Page
+*******************/
+#mainContentWrapper{ width: 100%; max-width: 950px; margin: 0 auto; }
+#siteLogo{ float: left; font-size: 26px; margin: 26px 0 10px 0;}
+#siteLogo a{ text-decoration: none; color: inherit; }
+#logoBold{ font-weight: 900; }
+#logoThin{ font-weight: 300; }
+#mainSlider{ width: 100%; position: relative; height: 300px; }
+.mainSliderImg{ width: 100%; height: 100%; top: 0; left:0; position: absolute; }
+
+#mainNav, #secondaryNav{ float: right; list-style: none; padding: 0; margin: 36px 0 10px 0; }
+#secondaryNav{ margin-top: 10px; }
+.mainNavItem, .secondaryNavItem{ float: left; }
+.mainNavItem a, .secondaryNavItem a{ color: #FFFFFF; font-weight: 700; font-size: 14px; padding: 10px; text-decoration: none; cursor: pointer; }
+.mainNavItem a:hover, .secondaryNavItem a:hover{ color: #07A5C1; }
+
+#socialLanding{ float: left; margin-top: 5px; font-weight: 700; font-size: 14px; }
+.socialIconImg{ width: 30px; margin: 0px 0px -10px 10px; }
+
+
+#imgTheatreWrapper{ width: 100%; height: 100%; position: fixed; top: 0; left: 0; padding: 60px 40px 20px 40px; background-color: #444444; }
+#imgTheatre{ background-color: #FFFFFF; position: relative; }
+#imagesList{ height: 100%; width: 410px; position:absolute; left: 0; top: 0; background-color: #FFFFFF; padding: 10px; overflow-y: auto; }
+#mainImgWrapper{ height: 100%; width: 100%; padding-left: 410px; background-color: #000000; }
+#mainImage{ position: relative; height: 100%; width: 100%; background-size: contain; background-position: center center; background-repeat: no-repeat; }
+.imageListItem{ width: 130px; }
+.listImg{ border:0; margin:0; padding: 0; width: 130px; float: left; opacity: 0.5; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; }
+.listImg:hover{ opacity: 1; }
+.listImg.active{ opacity: 1; }
+#prevButton, #nextButton{ position: absolute; top: 0; opacity: 0; cursor: pointer; -webkit-transition: opacity 0.2s ease-in-out; -moz-transition: opacity 0.2s ease-in-out; transition: opacity 0.2s ease-in-out; margin-top: -15px; }
+#prevButton{ height: 100%; left: 0px; width: 35%; }
+#nextButton{ height: 100%; right: 0px; width: 35%; }
+#mainImage:hover #prevButton, #mainImage:hover #nextButton{ opacity: 1; }
+
+
+#innerPagesHeader{ z-index: 1000; position: fixed; top: 0; width: 100%; background-color: #000000; }
+#innerPagesHeaderContent{ width: 100%; max-width: 950px; margin: 0 auto; }
+#innerPagesHeader #siteLogo{ margin-top: 10px; }
+#innerPagesHeader #mainNav{ margin-top: 20px; }
+
+#bookingsWrapper, #faqsWrapper{ width: 100%; max-width: 950px; padding: 10px; padding-top: 60px; margin: 0 auto; font-family: 'Roboto Condensed', sans-serif; }
+#bookingsWrapper h1>span, #faqsWrapper h1>span{ font-size: 24px; background-color: #07A5C1; }
+#bookingsWrapper h2>span, #faqsWrapper h2>span{ font-size: 24px; background-color: #BABABA; color: #000000; }
+#bookingsWrapper h3>span, #faqsWrapper h3>span{ font-size: 24px; }
+#bookingsWrapper a, #faqsWrapper a{ color: #07A5C1; }
+.highlight{ color: #07A5C1; }
+#faqsWrapper{  }
+#faqsWrapper .highlight{ display: inline-block; margin: 18px 0px; font-size: 18px; }
+
+
+
+
+@media screen and (max-width: 980px) {
+	#imgTheatreWrapper{ padding: 10px 20px; }
+    #masonryWrapper{ height: 100px; white-space: nowrap; position: relative; }
+    .listImg{ height: 100px; width: auto; float: none; }
+    #imagesList{ overflow-x: auto; overflow-y: hidden; width: 100%; top: initial; bottom: 0; height: 120px; }
+    #mainImgWrapper{ padding: 0; padding-bottom: 120px; }
+    #prevButton, #nextButton{ opacity: 1; }
+}
